@@ -1,4 +1,3 @@
-#include <math.h>
 
 #ifndef _STUDENT_PAGE_SPLITTING_H_
 #define _STUDENT_PAGE_SPLITTING_H_
@@ -19,13 +18,13 @@
  * @param addr The virtual address.
  * @return     The virtual page number for this address.
  */
-#define VADDR_PAGENUM(addr) (/*FIX ME*/ 0)
+#define VADDR_PAGENUM(addr) (addr / page_size)
 
 /*******************************************************************************
  * Get the offset for a particular address.
  * @param addr The virtual address.
  * @return     The offset into a page for the given virtual address.
  */
-#define VADDR_OFFSET(addr) (page_size % 5)
+#define VADDR_OFFSET(addr) (addr % page_size)
 
 #endif /*_STUDENT_PAGE_SPLITTING_H_*/

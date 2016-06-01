@@ -45,11 +45,26 @@ pfn_t pagefault_handler(vpn_t request_vpn, int write) {
   printf("PAGE FAULT (VPN %u), evicting (PFN %u VPN %u)\n", request_vpn,
          victim_pfn, victim_vpn);
 
+  /* Check if the frame we got is empty */
+  if (victim_pcb != NULL) {
+    /* Check if the frame is dirty */
+    if (victim_pcb->pagetable[victim_vpn].dirty != 0) {
+      page_to_disk(victim_pfn, victim_vpn, victim_pcb->pid);
+    }
+    victim_pcb->pagetable[victim_vpn].valid = 0;
+    tlb_clearone(victim_vpn);
+  }
+
   /* FIX ME */
   /* Update the reverse lookup table to replace the victim entry info with this
    * process' info instead (pcb and vpn)
    * Update the current process' page table (pfn and valid)
    */
+
+  rlt[victim_pfn].vpn = request_vpn;
+  rlt[victim_pfn].pcb = current;
+  current_pagetable[request_vpn].pfn = victim_pfn;
+  current_pagetable[request_vpn].valid = 1;
 
   /*
    * Retreive the page from disk. Note that is really a lie: we save pages in

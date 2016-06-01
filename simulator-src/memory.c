@@ -22,24 +22,21 @@ uint8_t *memory;
  * @return The data at the given address.
  */
 word_t mem_load(vaddr_t va) {
-  vpn_t vpn;
-  pfn_t pfn, offset;
-  word_t data;
+   vpn_t vpn;
+   pfn_t pfn, offset;
+   word_t data;
 
-  vpn = VADDR_PAGENUM(va);
-  pfn = tlb_lookup(vpn, 0);
-  offset = VADDR_OFFSET(va);
-  data = memory[pfn * page_size + offset];
+   vpn = VADDR_PAGENUM(va);
+   pfn = tlb_lookup(vpn, 0);
+   offset = VADDR_OFFSET(va);
+   data = memory[pfn * page_size + offset];
 
-  printf("addr: %d\n", va);
-  printf("offset = %d\n", offset);
+   printf("LOAD  %5.5hu -> %3.3u (VPN %5.5hu PFN %5.5hu OFFSET %5.5hu)\n", 
+          va, (unsigned int)data, vpn, pfn, offset);
 
-  printf("LOAD  %5.5hu -> %3.3u (VPN %5.5hu PFN %5.5hu OFFSET %5.5hu)\n", va,
-         (unsigned int)data, vpn, pfn, offset);
+   count_reads++;
 
-  count_reads++;
-
-  return data;
+   return data;
 }
 
 /**
@@ -50,32 +47,34 @@ word_t mem_load(vaddr_t va) {
  * @param data The data to write to the address.
  */
 void mem_store(vaddr_t va, word_t data) {
-  vpn_t vpn;
-  pfn_t pfn, offset;
+   vpn_t vpn;
+   pfn_t pfn, offset;
 
-  vpn = VADDR_PAGENUM(va);
-  pfn = tlb_lookup(vpn, 1);
-  offset = VADDR_OFFSET(va);
+   vpn = VADDR_PAGENUM(va);
+   pfn = tlb_lookup(vpn, 1);
+   offset = VADDR_OFFSET(va);
 
-  printf("STORE %5.5u <- %3.3u (VPN %5.5u PFN %5.5u OFFSET %5.5u)\n", va, data,
-         vpn, pfn, offset);
+   printf("STORE %5.5u <- %3.3u (VPN %5.5u PFN %5.5u OFFSET %5.5u)\n", 
+          va, data, vpn, pfn, offset);
 
-  count_writes++;
+   count_writes++;
 
-  memory[pfn * page_size + offset] = data;
+   memory[pfn * page_size + offset] = data;
 }
 
 /*******************************************************************************
  * Initializes main memory (RAM)
  */
 void mem_init(void) {
-  if ((memory = calloc(mem_size, sizeof(unsigned char))) == NULL) {
-    PERROR("calloc");
-    exit(EXIT_FAILURE);
-  }
+   if ((memory    = calloc(mem_size, sizeof(unsigned char))) == NULL) {
+      PERROR("calloc");
+      exit(EXIT_FAILURE);
+   }
 }
 
 /*******************************************************************************
  * Frees all the memory used to represent physical memory
  */
-void mem_free(void) { free(memory); }
+void mem_free(void) {
+   free(memory);
+}

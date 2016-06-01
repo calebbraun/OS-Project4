@@ -15,13 +15,13 @@ tlbe_t* tlb;
  * mappings are valid.
  */
 void tlb_clearall(void) {
-   int i;
+  int i;
 
-   for (i = 0; i < tlb_size; i++) {
-      tlb[i].valid = 0;
-      tlb[i].dirty = 0;
-      tlb[i].used = 0;
-   }
+  for (i = 0; i < tlb_size; i++) {
+    tlb[i].valid = 0;
+    tlb[i].dirty = 0;
+    tlb[i].used = 0;
+  }
 }
 
 /*******************************************************************************
@@ -31,30 +31,28 @@ void tlb_clearall(void) {
  * @param vpn The virtual page number of the TLB entry to invalidate.
  */
 void tlb_clearone(vpn_t vpn) {
-   int i;
+  int i;
 
-   for (i = 0; i < tlb_size; i++) {
-      if (tlb[i].vpn == vpn) {
-         tlb[i].valid = 0;
-         tlb[i].dirty = 0;
-         tlb[i].used = 0;
-      }
-   }
+  for (i = 0; i < tlb_size; i++) {
+    if (tlb[i].vpn == vpn) {
+      tlb[i].valid = 0;
+      tlb[i].dirty = 0;
+      tlb[i].used = 0;
+    }
+  }
 }
 
 /*******************************************************************************
  * Initializes the memory for representing the TLB.
  */
 void tlb_init(void) {
-   if ((tlb = calloc(tlb_size, sizeof(tlbe_t))) == NULL) {
-      PERROR("calloc");
-      exit(EXIT_FAILURE);
-   }
+  if ((tlb = calloc(tlb_size, sizeof(tlbe_t))) == NULL) {
+    PERROR("calloc");
+    exit(EXIT_FAILURE);
+  }
 }
 
 /*******************************************************************************
  * Frees the memory used for representing the TLB.
  */
-void tlb_free(void) {
-   free(tlb);
-}
+void tlb_free(void) { free(tlb); }

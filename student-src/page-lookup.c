@@ -11,7 +11,15 @@
  * @return The physical frame number of the page we are accessing.
  */
 pfn_t pagetable_lookup(vpn_t vpn, int write) {
-  pfn_t pfn = 0;
+  pfn_t pfn;
+
+  if (current_pagetable[vpn].valid == 0) {
+    count_pagefaults++;
+    pagefault_handler(vpn, write);
+    current_pagetable[vpn].valid = 1;
+  }
+
+  pfn = current_pagetable[vpn].pfn;
 
   /* FIX ME - Part 2
    * Determine the PFN corresponding to the passed in VPN.
